@@ -4,11 +4,10 @@ This is a version that I got to work on MacOS.
 
 I modified the make file and removed rofi completely.
 
-One can also modify `ssh.bash` on line 117 to use `gfind` from `findutils` on homebrew if they prefer that over xargs.
+One can also modify `ssh.bash` on line 117 to use `gfind` from `findutils` on homebrew if they prefer that over `xargs`.
 
-Original: [ibizaman](https://github.com/ibizaman)
-==================
-
+# Original: [ibizaman](https://github.com/ibizaman):
+---------------------------------------------------------------------
 
 # pass ssh 0.2 [![build status][build-img]][build-url]
 
