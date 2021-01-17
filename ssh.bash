@@ -32,13 +32,9 @@ cmd_ssh_usage() {
         Provide an interactive solution to create ssh private and public
         keypairs with passphrases stored in pass as well as write the
         public key to stdout. It will show all available ssh keys in
-        either fzf or rofi, wait for the user to select one and write
+        either fzf and wait for the user to select one and write
         the public key to stdout.
-        
-        The user can select fzf or rofi by giving either --fzf or
-        --rofi. By default, rofi will be selected and pass-ssh will
-        fallback to fzf.
-        
+
         If the selected key file does not exist under the directory
         given by --ssh-dir, first a passphrase will be generated in pass
         under the prefix given by --pass-prefix. Specific passphrase
@@ -48,13 +44,17 @@ cmd_ssh_usage() {
         passphrase and with ssh-keygen's -t and -b option given
         respectively by --ssh-t and --ssh-b. Lastly, the public key is
         written to stdout.
-        
+
         If the selected key exists, the public key is simply writeen to
         stdout.
 
+    Needed:
+        Fzf is to be installed for it to work. This is meant to be
+        compatible only with MacOS. One can change line 117 if they
+        want to use 'gfind' from 'findutils' (on homebrew) to print the
+        ssh keys.
+
     Options:
-        -f, --fzf                    Use fzf to select key files.
-        -r, --rofi                   Use rofi to select key files.
         -d, --ssh-dir                Directory holding ssh keyfiles,
                                      default $HOME/.ssh.
         -p, --pass-prefix            Prefix under which passphrase are
@@ -72,7 +72,6 @@ _EOF
 
 cmd_ssh_short_usage() {
     echo "Usage: pass ssh [--help,-h]" \
-        "[--fzf,-f]|[--rofi,-r]" \
         "[--ssh-dir <s>,-d <s>]" \
         "[--pass-prefix <s>,-p <s>]" \
         "[--passphrase-no-symbols,-n]" \
@@ -87,19 +86,18 @@ command_exists() {
 
 cmd_ssh() {
     # Parse arguments
-    local opts fzf=0 rofi=0
+    local opts fzf=1
     local symbols="" length="25"
     local ssh_dir="$HOME/.ssh"
     local pass_prefix="sshkey-passphrase"
     local ssh_type="rsa"
     local ssh_bits=4096
-    opts="$($GETOPT -o frd:p:nl: -l fzf,rofi,ssh-dir:,pass-prefix:,passphrase-no-symbols,passphrase-length:,ssh-t:,ssh-b: -n "$PROGRAM $COMMAND" -- "$@")"
+    opts="$($GETOPT -o frd:p:nl: -l fzf,ssh-dir:,pass-prefix:,passphrase-no-symbols,passphrase-length:,ssh-t:,ssh-b: -n "$PROGRAM $COMMAND" -- "$@")"
     local err=$?
     eval set -- "$opts"
 
     while true; do case "$1" in
             -f|--fzf) fzf=1; shift ;;
-            -r|--rofi) rofi=1; shift ;;
             -d|--ssh-dir) ssh_dir="$2"; shift 2 ;;
             -p|--pass-prefix) pass_prefix="$2"; shift 2 ;;
             -n|--passphrase-no-symbols) symbols="--no-symbols"; shift ;;
@@ -111,32 +109,13 @@ cmd_ssh() {
 
     [[ $err -ne 0 ]] && die "$(cmd_ssh_short_usage)"
 
-    # Figure out if we use fzf or rofi
     local prompt="Select a ssh key:"
     local fzf_cmd="fzf --print-query --prompt=\"$prompt\" | tail -n1"
-    local rofi_cmd="rofi -dmenu -i -p \"$prompt\""
+    menu="$fzf_cmd"
 
-    if [[ $fzf = 1 && $rofi = 1 ]]; then
-        die 'Either --fzf,-f or --rofi,-r must be given, not both'
-    fi
-
-    if [[ $rofi = 1 || $fzf = 0 ]]; then
-        command_exists rofi || die "Could not find rofi in \$PATH"
-        menu="$rofi_cmd"
-    elif [[ $fzf = 1 || $rofi = 0 ]]; then
-        command_exists fzf || die "Could not find fzf in \$PATH"
-        menu="$fzf_cmd"
-    else
-        if command_exists rofi; then
-            menu="$rofi_cmd"
-        elif command_exists fzf; then
-            menu="$fzf_cmd"
-        else
-            die "Could not find either fzf or rofi in \$PATH"
-        fi
-    fi
-
-    ssh_key=$(find "$ssh_dir" -name '*.pub' -printf '%P\n' \
+    # NOTE: Alternative way to print keys using `findutils` from homebrew
+    # ssh_key=$(gfind "$ssh_dir" -name '*.pub' -printf '%P\n' \
+    ssh_key=$(find "$ssh_dir" -name '*.pub' -print0 | xargs -0 basename \
         | sed -e 's/.pub$//' \
         | eval "$menu" )
 

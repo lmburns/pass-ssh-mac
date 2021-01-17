@@ -1,9 +1,10 @@
 PROG ?= ssh
-PREFIX ?= /usr
+PREFIX ?= /usr/local
 DESTDIR ?=
 LIBDIR ?= $(PREFIX)/lib
-SYSTEM_EXTENSION_DIR ?= $(LIBDIR)/password-store/extensions
 MANDIR ?= $(PREFIX)/share/man
+
+SYSTEM_EXTENSION_DIR ?= $(LIBDIR)/password-store/extensions
 
 all:
 	@echo "pass-$(PROG) is a shell script and does not need compilation, it can be simply executed."
@@ -14,9 +15,9 @@ all:
 	@echo "     password store"
 
 install:
-	@install -v -d "$(DESTDIR)$(MANDIR)/man1" && install -m 0644 -v pass-$(PROG).1 "$(DESTDIR)$(MANDIR)/man1/pass-$(PROG).1"
-	@install -v -d "$(DESTDIR)$(SYSTEM_EXTENSION_DIR)/"
-	@install -Dm0755 $(PROG).bash "$(DESTDIR)$(SYSTEM_EXTENSION_DIR)/$(PROG).bash"
+	@install -vd "$(DESTDIR)$(SYSTEM_EXTENSION_DIR)/" "$(DESTDIR)$(MANDIR)/man1"
+	@install -vm 0644 pass-$(PROG).1 "$(DESTDIR)$(MANDIR)/man1/pass-$(PROG).1"
+	@install -vm 0755 $(PROG).bash "$(DESTDIR)$(SYSTEM_EXTENSION_DIR)/$(PROG).bash"
 	@echo
 	@echo "pass-$(PROG) is installed succesfully"
 	@echo
@@ -31,11 +32,3 @@ test:
 
 lint:
 	shellcheck -s bash $(PROG).bash
-
-aur:
-	./update-aur.sh
-
-aur-push:
-	git submodule foreach 'git push'
-
-.PHONY: install uninstall lint aur test
