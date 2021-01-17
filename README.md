@@ -1,10 +1,27 @@
 # pass ssh - Modified Version for Mac
 
-This is a version that I got to work on MacOS.
+pass-ssh-mac is a version of pass ssh that is compatible with MacOS.
 
-I modified the make file and removed rofi completely.
+The only differences from the original (which is compatible with ArchLinux) is
+the Makefile and the `ssh.bash` script.
 
-One can also modify `ssh.bash` on line 117 to use `gfind` from `findutils` on homebrew if they prefer that over `xargs`.
+[Fzf](https://github.com/junegunn/fzf) is required for this version to work.
+
+To install:
+
+```sh
+git clone https://github.com/burnsac5040/pass-ssh-mac.git
+cd pass-ssh-mac
+sudo make install  # No need for PREFIX=/usr/local
+```
+
+NOTE: For what it's worth, one can modify `ssh.bash` on line 117 to use `gfind` from `findutils` on homebrew if they prefer that over `xargs`.
+
+```sh
+ssh_key=$(gfind "$ssh_dir" -name '*.pub' -printf '%P\n' \
+ssh_key=$(find "$ssh_dir" -name '*.pub' -print0 | xargs -0 basename \
+```
+
 
 # Original: [ibizaman](https://github.com/ibizaman):
 ---------------------------------------------------------------------
