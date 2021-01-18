@@ -115,7 +115,7 @@ cmd_ssh() {
 
     # NOTE: Alternative way to print keys using `findutils` from homebrew
     # ssh_key=$(gfind "$ssh_dir" -name '*.pub' -printf '%P\n' \
-    ssh_key=$(find "$ssh_dir" -name '*.pub' -print0 | xargs -0 basename \
+    ssh_key=$(find "$ssh_dir" -name '*.pub' | awk -F/ '{print $NF}' \
         | sed -e 's/.pub$//' \
         | eval "$menu" )
 

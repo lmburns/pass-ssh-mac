@@ -15,11 +15,11 @@ cd pass-ssh-mac
 sudo make install  # No need for PREFIX=/usr/local
 ```
 
-NOTE: For what it's worth, one can modify `ssh.bash` on line 117 to use `gfind` from `findutils` on homebrew if they prefer that over `xargs`.
+NOTE: For what it's worth, one can modify `ssh.bash` on line 117 to use `gfind` from `findutils` on homebrew if they prefer that over `awk`.
 
 ```sh
 ssh_key=$(gfind "$ssh_dir" -name '*.pub' -printf '%P\n' \
-ssh_key=$(find "$ssh_dir" -name '*.pub' -print0 | xargs -0 basename \
+ssh_key=$(find "$ssh_dir" -name '*.pub' | awk -F/ '{print $NF}' \
 ```
 
 
