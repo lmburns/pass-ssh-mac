@@ -3,24 +3,20 @@
 .SH NAME
 pass ssh - A \fBpass\fP(1) extension that creates ssh keys with an
 automatically generated passphrases stored in pass and outputs the
-public key using \fBfzf\fP(1) or \fBrofi\fP(1).
+public key using \fBfzf\fP(1).
 
 .SH SYNOPSIS
 \fBpass ssh\fP [--help,-h]
-    [--fzf,-f]|[--rofi,-r] [--ssh-dir <s>,-d <s>]
-    [--pass-prefix <s>,-p <s>] [--passphrase-no-symbols,-n] [--passphrase-length <s>,-l <s>]
+    [--ssh-dir <s>,-d <s>] [--pass-prefix <s>,-p <s>]
+    [--passphrase-no-symbols,-n] [--passphrase-length <s>,-l <s>]
     [--ssh-t <s>] [--ssh-b <s>]
 
 .SH DESCRIPTION
 \fBpass-ssh\fP  Provides an interactive solution to create ssh private
 and public keypairs with passphrases stored in \fIpass\fP as well as
 write the public key to stdout. It will show all available ssh keys in
-either \fIfzf\fP or \fIrofi\fP, wait for the user to select one and
-write the public key to stdout.
-        
-The user can select \fIfzf\fP or \fIrofi\fP by giving either \fI--fzf\fP
-or \fI--rofi\fP. By default, \fIrofi\fP will be selected and
-\fBpass-ssh\fP will fallback to \fIfzf\fP.
+\fIfzf\fP and wait for the user to select one and write the public key
+to stdout.
 
 If the selected key file does not exist under the directory given by
 \fI--ssh-dir\fP, first a passphrase will be generated in \fBpass\fP
@@ -35,14 +31,6 @@ is written to stdout.
 If the selected key exists, the public key is simply written to stdout.
 
 .SH OPTIONS
-
-.TP
-\fB\-f\fB, \-\-fzf\fR
-Use fzf to select pass-name.
-
-.TP
-\fB\-r\fB, \-\-rofi\fR
-Use rofi to select pass-name.
 
 .TP
 \fB\-d\fB, \-\-ssh\-dir\fR
@@ -88,7 +76,6 @@ pass ssh | xclip -in -selection clipboard
 .SH SEE ALSO
 .BR fzf(1),
 .BR pass(1),
-.BR rofi(1),
 .BR ssh-keygen(1),
 .BR xclip(1),
 
