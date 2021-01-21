@@ -111,12 +111,16 @@ cmd_ssh() {
         fzf=1
     fi
 
-
     [[ $err -ne 0 ]] && die "$(cmd_ssh_short_usage)"
 
     local prompt="Select a ssh key:"
     local fzf_cmd="fzf --print-query --prompt=\"$prompt\" | tail -n1"
     menu="$fzf_cmd"
+
+    if [[ $fzf = 1 ]]; then
+        command_exists fzf || die "Could not find fzf in \$PATH"
+        menu="$fzf_cmd"
+    fi
 
     # NOTE: Alternative way to print keys using `findutils` from homebrew
     # ssh_key=$(gfind "$ssh_dir" -name '*.pub' -printf '%P\n' \
