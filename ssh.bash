@@ -86,18 +86,23 @@ command_exists() {
 
 cmd_ssh() {
     # Parse arguments
-    local opts fzf=1
+    local opts fzf=0
     local symbols="" length="25"
     local ssh_dir="$HOME/.ssh"
     local pass_prefix="sshkey-passphrase"
     local ssh_type="rsa"
     local ssh_bits=4096
+
+    if command_exists fzf; then
+        fzf=1
+    fi
+
     opts="$($GETOPT -o frd:p:nl: -l fzf,ssh-dir:,pass-prefix:,passphrase-no-symbols,passphrase-length:,ssh-t:,ssh-b: -n "$PROGRAM $COMMAND" -- "$@")"
     local err=$?
+
     eval set -- "$opts"
 
     while true; do case "$1" in
-            -f|--fzf) fzf=1; shift ;;
             -d|--ssh-dir) ssh_dir="$2"; shift 2 ;;
             -p|--pass-prefix) pass_prefix="$2"; shift 2 ;;
             -n|--passphrase-no-symbols) symbols="--no-symbols"; shift ;;
