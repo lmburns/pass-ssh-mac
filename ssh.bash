@@ -92,11 +92,6 @@ cmd_ssh() {
     local pass_prefix="sshkey-passphrase"
     local ssh_type="rsa"
     local ssh_bits=4096
-
-    if command_exists fzf; then
-        fzf=1
-    fi
-
     opts="$($GETOPT -o frd:p:nl: -l fzf,ssh-dir:,pass-prefix:,passphrase-no-symbols,passphrase-length:,ssh-t:,ssh-b: -n "$PROGRAM $COMMAND" -- "$@")"
     local err=$?
 
@@ -111,6 +106,11 @@ cmd_ssh() {
             --ssh-b) ssh_bits="$2"; shift 2 ;;
             --) shift; break ;;
     esac done
+
+    if command_exists fzf; then
+        fzf=1
+    fi
+
 
     [[ $err -ne 0 ]] && die "$(cmd_ssh_short_usage)"
 
